@@ -7,28 +7,13 @@ export const routes: IRoute[] = [
     type: "menu",
   },
   {
-    title: "Login",
-    link: "/login",
-    type: "link",
-  },
-  {
-    title: "Notariat",
+    title: "About",
     link: "/about",
     type: "menu",
   },
   {
-    title: "Notaries",
-    link: "/notaries",
-    type: "menu",
-  },
-  {
-    title: "Regulatory acts",
-    link: "/regulatory-acts",
-    type: "menu",
-  },
-  {
-    title: "Questions and answers",
-    link: "/qa",
+    title: "Contacts",
+    link: "/contacts",
     type: "menu",
   },
 ];

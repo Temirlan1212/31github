@@ -11,12 +11,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { truncateText } from "@/helpers/truncate";
-import { getServerSession } from "next-auth";
-import { options } from "@/app/api/auth/[...nextauth]/options";
+import { Session } from "next-auth";
 import { SignOutLink } from "../ui/sign-out-link";
 
-export async function UserNav() {
-  const session = await getServerSession(options);
+export async function UserNav(session: Session) {
   const username = session?.user?.username || "";
   const email = session?.user?.email || "";
 

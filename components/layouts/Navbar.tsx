@@ -17,11 +17,16 @@ const Navbar = async () => {
           <ThemeToggle />
 
           {!!session ? (
-            <UserNav />
+            <UserNav {...session} />
           ) : (
-            <Link href="sign-in">
-              <Button variant="outline">login</Button>
-            </Link>
+            <div className="flex gap-[5px]">
+              <Link href="sign-in">
+                <Button variant="outline">login</Button>
+              </Link>
+              <Link href="sign-up">
+                <Button variant="outline">sign up</Button>
+              </Link>
+            </div>
           )}
         </div>
       </div>

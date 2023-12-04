@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import NextAuthProvider from "./context/NextAuthProvider";
 import { NextThemeProvider } from "./context/NextThemeProvider";
+import NextProgressBar from "./context/NextProgressBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html lang="en">
         <body className={inter.className}>
           <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <NextProgressBar color="#FE26B1" />
             {children}
           </NextThemeProvider>
         </body>
