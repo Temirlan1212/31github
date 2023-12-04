@@ -3,53 +3,95 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IUserFormSchema, userFormSchema } from "@/app/schemas/user";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 export function UserCreateForm() {
+  const form = useForm<IUserFormSchema>({
+    resolver: zodResolver(userFormSchema),
+  });
+
+  function onSubmit(data: IUserFormSchema) {
+    console.log(data);
+  }
+
   return (
-    <Card className="p-[10px]">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl">Create an account</CardTitle>
-        <CardDescription>Enter your email below to create your account</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <div className="grid grid-cols-2 gap-6">
-          <Button variant="outline">
-            {/* <Icons.gitHub className="mr-2 h-4 w-4" /> */}
-            Github
-          </Button>
-          <Button variant="outline">
-            {/* <Icons.google className="mr-2 h-4 w-4" /> */}
-            Google
-          </Button>
-        </div>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-          </div>
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" />
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button className="w-full">Create account</Button>
-      </CardFooter>
-      <p className="px-8 text-center text-sm text-muted-foreground">
-        If you already have an account{" "}
-        <Link href="/authentication" className="underline underline-offset-4 hover:text-primary">
-          Login
-        </Link>
-      </p>
-    </Card>
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+          <Card className="p-[10px]">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl">Create an account</CardTitle>
+              <CardDescription>Enter your email below to create your account</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid grid-cols-2 gap-6">
+                <Button variant="outline">
+                  {/* <Icons.gitHub className="mr-2 h-4 w-4" /> */}
+                  Github
+                </Button>
+                <Button variant="outline">
+                  {/* <Icons.google className="mr-2 h-4 w-4" /> */}
+                  Google
+                </Button>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input id="password" type="password" color="error" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="w-full">
+                Create account
+              </Button>
+            </CardFooter>
+
+            <p className="px-8 text-center text-sm text-muted-foreground">
+              If you already have an account{" "}
+              <Link href="/authentication" className="underline underline-offset-4 hover:text-primary">
+                Login
+              </Link>
+            </p>
+          </Card>
+        </form>
+      </Form>
+    </>
   );
 }
