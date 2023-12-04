@@ -1,16 +1,28 @@
-import { redirect } from "next/navigation";
 import { MainNav } from "@/components/layouts/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserNav } from "./user-nav";
+import { getServerSession } from "next-auth";
+import { options } from "@/app/api/auth/[...nextauth]/options";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 const Navbar = async () => {
+  const session = await getServerSession(options);
+
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">
           <ThemeToggle />
-          <UserNav />
+
+          {!!session ? (
+            <UserNav />
+          ) : (
+            <Link href="sign-in">
+              <Button variant="outline">login</Button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

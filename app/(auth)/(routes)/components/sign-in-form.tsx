@@ -6,50 +6,65 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IUserFormSchema, userFormSchema } from "@/app/schemas/user";
+import { IUserFormSchema, userFormSchema } from "@/validator-shema/user";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { authentication } from "@/helpers/auth";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export function UserCreateForm() {
+export function SignInForm() {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const form = useForm<IUserFormSchema>({
     resolver: zodResolver(userFormSchema),
+    defaultValues: {
+      email: "",
+      username: "",
+      password: "",
+    },
   });
 
-  function onSubmit(data: IUserFormSchema) {
-    console.log(data);
+  const { setError, reset } = form;
+
+  async function onSubmit(data: IUserFormSchema) {
+    setLoading(true);
+    await authentication({
+      credentials: { username: data.username, email: data?.email || "", password: data.password },
+      options: { setError, reset, router },
+    });
+    setLoading(false);
   }
 
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <Card className="p-[10px]">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl">Create an account</CardTitle>
               <CardDescription>Enter your email below to create your account</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
-              <div className="grid grid-cols-2 gap-6">
+              {/* <div className="grid grid-cols-2 gap-6">
                 <Button variant="outline">
-                  {/* <Icons.gitHub className="mr-2 h-4 w-4" /> */}
                   Github
                 </Button>
                 <Button variant="outline">
-                  {/* <Icons.google className="mr-2 h-4 w-4" /> */}
                   Google
                 </Button>
-              </div>
-              <div className="relative">
+              </div> */}
+              {/* <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
                 </div>
-              </div>
+              </div> */}
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Имя</FormLabel>
@@ -61,6 +76,7 @@ export function UserCreateForm() {
                   )}
                 />
               </div>
+
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
@@ -76,17 +92,33 @@ export function UserCreateForm() {
                   )}
                 />
               </div>
+
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="example@gmail.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="w-full">
-                Create account
+              <Button type="submit" className="w-full" loading={loading}>
+                sign in
               </Button>
             </CardFooter>
 
             <p className="px-8 text-center text-sm text-muted-foreground">
-              If you already have an account{" "}
-              <Link href="/authentication" className="underline underline-offset-4 hover:text-primary">
-                Login
+              If you dont have an account{" "}
+              <Link href="/sign-up" className="underline underline-offset-4 hover:text-primary">
+                Sign up
               </Link>
             </p>
           </Card>

@@ -1,3 +1,10 @@
+import Navbar from "@/components/layouts/navbar";
+
 export default function Home() {
-  return <main className="container">home</main>;
+  return (
+    <>
+      <Navbar />
+      <main className="container">home</main>
+    </>
+  );
 }
