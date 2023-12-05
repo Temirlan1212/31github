@@ -3,10 +3,7 @@ export const findDiff = (obj1: {}, obj2: {}) => {
 
   for (let item1 in obj1) {
     for (let item2 in obj2) {
-      if (
-        item1 === item2 &&
-        obj1[item1 as keyof typeof obj1] !== obj2[item2 as keyof typeof obj2]
-      ) {
+      if (item1 === item2 && obj1[item1 as keyof typeof obj1] !== obj2[item2 as keyof typeof obj2]) {
         changesVals.push(item1);
       }
     }
@@ -15,11 +12,9 @@ export const findDiff = (obj1: {}, obj2: {}) => {
   return changesVals;
 };
 
-export const isEqual = (obj1: {}, obj2: {}) =>
-  JSON.stringify(obj1) === JSON.stringify(obj2);
+export const isEqual = (obj1: {}, obj2: {}) => JSON.stringify(obj1) === JSON.stringify(obj2);
 
-export const isEmptyOrNull = (value: string | null) =>
-  value === "" || value == null;
+export const isEmptyOrNull = (value: string | null) => value === "" || value == null;
 
 export const isArray = (value: any) => Array.isArray(value);
 
@@ -49,10 +44,7 @@ export class ThrowNewError extends Error {
 }
 
 export const setNewError = (message: any, options?: { name?: string }) => {
-  if (
-    (!isEmptyOrNull(message) && typeof "" === typeof message) ||
-    !isEmptyObject(message)
-  ) {
+  if ((!isEmptyOrNull(message) && typeof "" === typeof message) || !isEmptyObject(message)) {
     class CustomError extends Error {
       constructor(message: string) {
         super(message);
@@ -92,4 +84,8 @@ export const joinArray = (type: "all" | "middle", arr = [], separator = "") => {
 
     return result;
   }
+};
+
+export const getActiveRoute = (a: string, b: string) => {
+  return a === (b?.startsWith("/") ? b : "/" + b);
 };
