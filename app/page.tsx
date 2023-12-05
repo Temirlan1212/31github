@@ -1,10 +1,6 @@
-import Navbar from "@/components/layouts/navbar";
+import { redirect } from "next/navigation";
+import { defaultLocale } from "@/navigation";
 
-export default function Home() {
-  return (
-    <>
-      <Navbar />
-      <main className="container">home</main>
-    </>
-  );
+export default function RootPage() {
+  redirect(defaultLocale);
 }

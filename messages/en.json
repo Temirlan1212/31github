@@ -1,0 +1,14 @@
+{
+  "Main": "Home",
+  "MainError": {
+    "Could not fetch user.": "Could not fetch user.",
+    "Not authenticated.": "Not authenticated.",
+    "User not found.": "User not found.",
+    "error": "Error"
+  },
+  "Navbar": {
+    "home": "Home",
+    "sign-out": "Log out",
+    "sign-in": "Sign in"
+  }
+}

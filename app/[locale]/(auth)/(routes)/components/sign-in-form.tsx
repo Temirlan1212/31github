@@ -11,8 +11,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { authentication } from "@/helpers/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function SignInForm() {
+  const t = useTranslations();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const form = useForm<IUserFormSchema>({
@@ -41,7 +43,7 @@ export function SignInForm() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Card className="p-[10px]">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl">Create an account</CardTitle>
+              <CardTitle className="text-2xl">{t("Main")}</CardTitle>
               <CardDescription>Enter your email below to create your account</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">

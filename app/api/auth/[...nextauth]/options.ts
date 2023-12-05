@@ -1,6 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { DefaultSession, NextAuthOptions } from "next-auth";
-import { IUserCredentials } from "@/models/user/user";
+import { IUserCredentials } from "@/models/user";
 import connectToDb from "@/lib/mongoose";
 import User from "@/lib/models/user.model";
 import bcrypt from "bcrypt";
