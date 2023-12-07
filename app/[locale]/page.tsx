@@ -8,13 +8,15 @@ export default function Home() {
   return (
     <div className="h-[200vh]">
       <Navbar />
-      <div className="container mt-[10px] !sticky !top-[10px]">
+      {/* <div className="container mt-[10px] !sticky !top-[10px]">
         <CategoryNav />
-      </div>
+      </div> */}
 
       <main className="container">{t("Main")}</main>
 
-      <HeroSection />
+      <div className="container">
+        <HeroSection />
+      </div>
     </div>
   );
 }

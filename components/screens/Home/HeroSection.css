@@ -1,0 +1,46 @@
+.swiper-button-prev:after,
+.swiper-rtl .swiper-button-next:after {
+  content: "";
+}
+
+.swiper-button-next:after,
+.swiper-rtl .swiper-button-prev:after {
+  content: "";
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  &.disabled\:opacity-50:disabled {
+    display: none !important;
+  }
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.swiper:hover {
+  .swiper-button-prev,
+  .swiper-button-next {
+    opacity: 0.6;
+    transition: all 0.2s ease;
+  }
+}
+
+.swiper-button-svg {
+  color: black;
+}
+
+.swiper-pagination-bullet {
+  background-color: aliceblue;
+  opacity: 1;
+  width: 5px;
+  height: 5px;
+}
+
+.swiper-pagination-bullet-active {
+  width: 8px;
+  height: 8px;
+}
