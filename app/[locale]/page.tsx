@@ -1,5 +1,6 @@
 import { CategoryNav } from "@/components/layouts/category-nav";
 import Navbar from "@/components/layouts/navbar";
+import { HeroSection } from "@/components/screens/Home/HeroSection";
 import { useTranslations } from "next-intl";
 
 export default function Home() {
@@ -12,6 +13,8 @@ export default function Home() {
       </div>
 
       <main className="container">{t("Main")}</main>
+
+      <HeroSection />
     </div>
   );
 }

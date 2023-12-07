@@ -3,7 +3,12 @@ const withNextIntl = require("next-intl/plugin")("./i18n.ts");
 
 const nextConfig = {
   images: {
-    domains: ["images.unsplash.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
 };
 
