@@ -1,5 +1,5 @@
 import { signIn } from "next-auth/react";
-import { IUserFormSchema } from "@/validator-shema/user";
+import { IUserFormSchema } from "@/app/validator-shema/user";
 import { UseFormReset, UseFormSetError } from "react-hook-form";
 import { getServerMessage } from "./server-messages";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
@@ -21,7 +21,7 @@ export const authentication = async (props: IAuthProps) => {
   const res = await signIn("credentials", { ...credentials, redirect: false });
 
   if (!res?.ok && res?.error) {
-    const errors = JSON.parse(res?.error ?? "");
+    const errors = JSON?.parse(res?.error ?? "");
     Object.keys(errors)?.map((key) => {
       const message = getServerMessage(errors?.[key]);
       setError(key, { message: message ?? "" });

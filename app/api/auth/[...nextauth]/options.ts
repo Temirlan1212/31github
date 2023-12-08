@@ -1,8 +1,8 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { DefaultSession, NextAuthOptions } from "next-auth";
-import { IUserCredentials } from "@/models/user";
+import { IUserCredentials, IUserRole } from "@/models/user";
 import connectToDb from "@/lib/mongoose";
-import User from "@/lib/models/user.model";
+import { Role, User } from "@/lib/models/user.model";
 import bcrypt from "bcrypt";
 import { getServerMessageKey } from "@/helpers/server-messages";
 import { setNewError } from "@/helpers/common";
@@ -17,10 +17,32 @@ declare module "next-auth" {
   interface Session {
     user?: {
       username?: string | null;
-      role?: string | null;
+      email?: string | null;
+      role?: IUserRole;
     } & DefaultSession["user"];
   }
 }
+
+const setServerErrors = (errors: Record<string, any>) => {
+  setNewError(JSON.stringify(errors));
+};
+
+const userNotFound = {
+  email: getServerMessageKey("userNotFound"),
+  username: getServerMessageKey("userNotFound"),
+};
+
+const usernameNotFound = {
+  username: getServerMessageKey("userNotFound"),
+};
+
+const emailNotFound = {
+  email: getServerMessageKey("userNotFound"),
+};
+
+const passwordNotFound = {
+  password: getServerMessageKey("wrongPassword"),
+};
 
 export const options: NextAuthOptions = {
   providers: [
@@ -31,28 +53,43 @@ export const options: NextAuthOptions = {
           label: "Username",
           type: "text",
         },
+        email: {
+          label: "Username",
+          type: "text",
+        },
         password: {
           label: "Password",
           type: "password",
         },
       },
       async authorize(credentials, req) {
-        const { password, email } = credentials as any;
+        const { password, email, username } = credentials as any;
         await connectToDb();
 
         try {
-          const user: any = await User.findOne({ email });
+          const user: any = await User.findOne({
+            $or: [{ email }, { username }],
+          });
+          // if (!user) setServerErrors(userNotFound);
+          // if (user.email === email && user.username === username) {
+          //   setServerErrors(userNotFound);
+          // }
+          // if (user.email === email) setServerErrors(usernameNotFound);
+          // if (user.username === username) setServerErrors(emailNotFound);
 
           if (user) {
-            const isPasswordCorrect = await bcrypt.compare(password, user.password);
+            const isPasswordCorrect = await bcrypt.compare(
+              password,
+              user.password
+            );
 
             if (isPasswordCorrect) {
               return user;
             } else {
-              setNewError(JSON.stringify({ password: getServerMessageKey("wrongPassword") }));
+              setServerErrors(passwordNotFound);
             }
           } else {
-            setNewError(JSON.stringify({ email: getServerMessageKey("userNotFound") }));
+            setServerErrors(userNotFound);
           }
         } catch (error) {
           setNewError(error);
@@ -62,10 +99,18 @@ export const options: NextAuthOptions = {
   ],
   callbacks: {
     jwt: async ({ token, user }) => {
+      let role = null;
+
+      try {
+        role = await Role.findOne({
+          _id: user.role,
+        });
+      } catch (error) {}
+
       if (user) {
         token.username = user.username;
         token.email = user.email;
-        token.role = user.role ?? "";
+        token.role = role ?? user.role ?? "";
       }
 
       return Promise.resolve(token);

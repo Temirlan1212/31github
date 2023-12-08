@@ -1,4 +1,4 @@
-import User from "@/lib/models/user.model";
+import { Role, User } from "@/lib/models/user.model";
 import bcrypt from "bcrypt";
 import { getServerMessageKey } from "@/helpers/server-messages";
 import { NextResponse } from "next/server";
@@ -7,7 +7,7 @@ import connectToDb from "@/lib/mongoose";
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { username, password, email } = body;
+  const { username, password, email, role } = body;
   if (req.body == null || username == null || password == null) {
     return new NextResponse(null, { status: 400 });
   }
@@ -36,9 +36,14 @@ export async function POST(req: Request) {
     );
   }
 
-  const newUser = new User({ username, email, password: hashedPassword });
   try {
-    await newUser.save();
+    const userRole = await Role.create({ name: "user" });
+    await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      role: userRole._id,
+    });
     return new NextResponse(
       JSON.stringify({
         message: "User has been created",

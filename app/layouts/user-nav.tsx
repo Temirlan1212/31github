@@ -7,12 +7,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from "@/app/ui/dropdown-menu";
+import { Button } from "@/app/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/app/ui/avatar";
 import { truncateText } from "@/helpers/truncate";
 import { Session } from "next-auth";
-import { SignOutLink } from "../ui/sign-out-link";
+import { SignOutLink } from "@/app/ui/sign-out-link";
+import { LogOut } from "lucide-react";
 
 export async function UserNav(session: Session) {
   const username = session?.user?.username || "";
@@ -32,7 +33,9 @@ export async function UserNav(session: Session) {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{username}</p>
-            <p className="text-xs leading-none text-muted-foreground">{email}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {email}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -41,22 +44,19 @@ export async function UserNav(session: Session) {
             Profile
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
-          {/* <DropdownMenuItem>
-            Billing
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Settings
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem> */}
-          {/* <DropdownMenuItem>New Team</DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <SignOutLink>
-          <DropdownMenuItem>
+          <DropdownMenuLabel
+            className={
+              "!cursor-pointer relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+            }
+          >
             Log out
-            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-          </DropdownMenuItem>
+            <DropdownMenuShortcut>
+              <LogOut className="w-[20px]" />
+            </DropdownMenuShortcut>
+          </DropdownMenuLabel>
         </SignOutLink>
       </DropdownMenuContent>
     </DropdownMenu>

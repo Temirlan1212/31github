@@ -1,13 +1,27 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/app/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/app/ui/card";
+import { Input } from "@/app/ui/input";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IUserFormSchema, userFormSchema } from "@/validator-shema/user";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { IUserFormSchema, userFormSchema } from "@/app/validator-shema/user";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/app/ui/form";
 import { authentication } from "@/helpers/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,7 +45,11 @@ export function SignInForm() {
   async function onSubmit(data: IUserFormSchema) {
     setLoading(true);
     await authentication({
-      credentials: { username: data.username, email: data?.email || "", password: data.password },
+      credentials: {
+        username: data.username,
+        email: data?.email || "",
+        password: data.password,
+      },
       options: { setError, reset, router },
     });
     setLoading(false);
@@ -44,7 +62,9 @@ export function SignInForm() {
           <Card className="p-[10px]">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl">{t("Main")}</CardTitle>
-              <CardDescription>Enter your email below to create your account</CardDescription>
+              <CardDescription>
+                Enter your email below to create your account
+              </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
               {/* <div className="grid grid-cols-2 gap-6">
@@ -87,7 +107,13 @@ export function SignInForm() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input id="password" type="password" color="error" {...field} />
+                        <Input
+                          id="password"
+                          placeholder="password"
+                          type="password"
+                          color="error"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -95,7 +121,7 @@ export function SignInForm() {
                 />
               </div>
 
-              <div className="grid gap-2">
+              {/* <div className="grid gap-2">
                 <FormField
                   control={form.control}
                   name="email"
@@ -103,13 +129,17 @@ export function SignInForm() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="example@gmail.com" {...field} />
+                        <Input
+                          type="email"
+                          placeholder="example@gmail.com"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
+              </div> */}
             </CardContent>
             <CardFooter>
               <Button type="submit" className="w-full" loading={loading}>
@@ -119,7 +149,10 @@ export function SignInForm() {
 
             <p className="px-8 text-center text-sm text-muted-foreground">
               If you dont have an account{" "}
-              <Link href="/sign-up" className="underline underline-offset-4 hover:text-primary">
+              <Link
+                href="/sign-up"
+                className="underline underline-offset-4 hover:text-primary"
+              >
                 Sign up
               </Link>
             </p>

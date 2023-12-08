@@ -1,6 +1,17 @@
 import mongoose from "mongoose";
 
-const userShema = new mongoose.Schema(
+const ObjectId = mongoose.Schema.Types.ObjectId;
+
+const roleSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    default: "user",
+  },
+});
+
+const Role = mongoose.models.Role || mongoose.model("Role", roleSchema);
+
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -16,12 +27,15 @@ const userShema = new mongoose.Schema(
       unique: true,
     },
     role: {
-      type: String,
+      type: ObjectId,
+      ref: "Role",
     },
   },
   { timestamps: true }
 );
 
-const User = mongoose.models.user || mongoose.model("user", userShema);
+userSchema.set("autoIndex", true);
 
-export default User;
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+
+export { User, Role };

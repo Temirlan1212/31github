@@ -9,7 +9,7 @@ export interface IUserCredentials extends IUser {
 
 export interface IUserRole {
   id: string;
-  name: string;
+  name: "admin" | "user";
 }
 
 export interface IUserData extends IUser {
