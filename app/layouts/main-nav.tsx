@@ -11,16 +11,17 @@ import {
 import { AlignJustify } from "lucide-react";
 import { routes } from "@/routes/main-routes";
 import { DefineNavigation } from "./define-navigation";
+import ActiveLink from "@/app/ui/active-link";
 
 export function Links({ isDialog }: { isDialog: boolean }) {
   return routes.map(({ path, title, role }, index) => (
     <DefineNavigation role={role} key={index}>
-      <Link
+      <ActiveLink
         href={`/${path}`}
         className="text-sm font-medium transition-colors hover:text-primary/80"
       >
         {isDialog ? <DialogClose>{title}</DialogClose> : title}
-      </Link>
+      </ActiveLink>
     </DefineNavigation>
   ));
 }
