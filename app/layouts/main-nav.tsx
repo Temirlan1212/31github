@@ -1,44 +1,24 @@
-import Link from "next/link";
 import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTrigger,
-} from "@/app/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@/app/ui/dialog";
 import { AlignJustify } from "lucide-react";
 import { routes } from "@/routes/main-routes";
 import { DefineNavigation } from "./define-navigation";
 import ActiveLink from "@/app/ui/active-link";
 
 export function Links({ isDialog }: { isDialog: boolean }) {
-  return routes.map(({ path, title, role }, index) => (
+  return routes.map(({ path, title, role, activeRoutes }, index) => (
     <DefineNavigation role={role} key={index}>
-      <ActiveLink
-        href={`/${path}`}
-        className="text-sm font-medium transition-colors hover:text-primary/80"
-      >
+      <ActiveLink activeRoutes={activeRoutes} href={`/${path}`}>
         {isDialog ? <DialogClose>{title}</DialogClose> : title}
       </ActiveLink>
     </DefineNavigation>
   ));
 }
 
-export function MainNav({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLElement>) {
+export function MainNav({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
   return (
     <>
-      <nav
-        className={cn(
-          "hidden md:flex items-center space-x-4 lg:space-x-6 !m-[0px]",
-          className
-        )}
-        {...props}
-      >
+      <nav className={cn("hidden md:flex items-center space-x-4 lg:space-x-6 !m-[0px]", className)} {...props}>
         <Links isDialog={false} />
       </nav>
       <div className="flex items-center md:!hidden">

@@ -33,7 +33,7 @@ export function HeroSection() {
 
   return (
     <div>
-      <Carousel>
+      <Carousel autoplay>
         {sliderImageUrl.map((imageUrl, index) => {
           return (
             <SwiperSlide key={index}>

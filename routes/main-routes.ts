@@ -1,4 +1,5 @@
 import { IRouteProps } from "@/models/routes";
+import { RoutePath as DashboardRoutePath } from "./dashboar-routes";
 
 export enum AppRoutes {
   MAIN = "main",
@@ -30,6 +31,7 @@ export const routesList: Partial<Record<AppRoutes, IRouteProps>> = {
     path: RoutePath.dashboard,
     type: "link",
     role: "admin",
+    activeRoutes: Object.values(DashboardRoutePath).map((route) => `/${route}`),
   },
   [AppRoutes.ABOUT]: {
     title: "About",

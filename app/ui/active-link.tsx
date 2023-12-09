@@ -2,19 +2,28 @@
 
 import Link, { LinkProps } from "next/link";
 import { usePathname } from "@/navigation";
+import { cn } from "@/lib/utils";
+import { PropsWithChildren } from "react";
 
-const ActiveLink = ({
-  children,
-  ...rest
-}: { children: React.ReactNode } & LinkProps & { className?: string }) => {
+export interface IActiveLinkProps extends LinkProps {
+  className?: { default?: string; active?: string };
+  activeRoutes?: string[];
+}
+
+const ActiveLink = ({ children, ...rest }: PropsWithChildren<IActiveLinkProps>) => {
   const { href } = rest;
-  const pathName = usePathname();
-  const isActive = pathName === href;
+  const pathname = usePathname();
+  const isActiveRoutes = rest.activeRoutes && Array.isArray(rest.activeRoutes);
+  const isActive = isActiveRoutes ? rest.activeRoutes.some((route) => route === pathname) : pathname === href;
 
   return (
     <Link
       {...rest}
-      className={isActive ? "pointer-events-none opacity-[0.7]" : ""}
+      className={cn(
+        "text-sm font-medium transition-colors text-primary/70 hover:text-primary",
+        rest?.className?.default ?? "",
+        isActive ? `pointer-events-none text-primary active ${rest?.className?.active ?? ""}` : ""
+      )}
     >
       {children}
     </Link>

@@ -2,6 +2,7 @@ export type IRoles = "user" | "admin" | "visitor";
 
 export interface IChildRouteData {
   icon: string;
+  activeRoutes: string[];
 }
 
 export interface IChildRoute extends Partial<IChildRouteData> {
