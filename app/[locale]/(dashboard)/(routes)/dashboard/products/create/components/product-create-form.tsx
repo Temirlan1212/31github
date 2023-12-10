@@ -53,7 +53,7 @@ export const ProductCreateForm = () => {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>description</FormLabel>
+                <FormLabel>descr</FormLabel>
                 <FormControl>
                   <Input id="password" placeholder="password" type="password" color="error" {...field} />
                 </FormControl>
