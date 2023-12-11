@@ -4,7 +4,7 @@ import { Config, ScreensConfig } from "tailwindcss/types/config";
 
 import tailwindConfig from "@/tailwind.config"; // Your tailwind config
 import { useEffect, useState } from "react";
-
+//use effect for cycle handling 
 const fullConfig = resolveConfig(tailwindConfig as unknown as Config);
 
 const breakpoints = fullConfig?.theme?.screens;
