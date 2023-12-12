@@ -9,6 +9,7 @@
   "Navbar": {
     "home": "Home",
     "sign-out": "Log out",
-    "sign-in": "Sign in"
+    "sign-in": "Sign in",
+    "profile": "Profile"
   }
 }
