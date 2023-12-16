@@ -1,28 +1,28 @@
 "use client";
 
 import { IProductFormSchema, productFormSchema } from "@/app/validator-shema/product";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Control, useFieldArray, useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/ui/form";
 import { Input } from "@/app/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import MultiSelectForm from "@/app/ui/multi-select";
+import MultiSelect from "@/app/ui/multi-select";
 import { Button } from "@/app/ui/button";
 import { Label } from "@/app/ui/label";
 import { ProductModelsDialog } from "./product-models-dialog";
 import { ProductModelsDataTable } from "./product-models-data-table";
+import { Tabs } from "@radix-ui/react-tabs";
+import { TabsContent, TabsList, TabsTrigger } from "@/app/ui/tabs";
 
 export const ProductCreateForm = () => {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const form = useForm<IProductFormSchema>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       title: "",
       description: "",
-      category: [""],
+      category: [],
       price: {
         currency: "kg",
         value: 0,
@@ -36,14 +36,43 @@ export const ProductCreateForm = () => {
     name: "models",
   });
 
-  const { fields, append, insert } = fieldArray;
-
   async function onSubmit(data: IProductFormSchema) {
     setLoading(true);
     console.log(data, "data");
     setLoading(false);
   }
 
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-[10px]">
+        <Tabs defaultValue="main">
+          <div className="flex gap-[10px] justify-between">
+            <TabsList>
+              <TabsTrigger value="main">Главная</TabsTrigger>
+              <TabsTrigger value="models">Модели</TabsTrigger>
+            </TabsList>
+            <Button type="submit" variant="outline">
+              Сохранить
+            </Button>
+          </div>
+
+          <TabsContent value="main" className="py-[20px]">
+            <MainTab control={form.control} />
+          </TabsContent>
+          <TabsContent value="models" className="py-[20px]">
+            <div className="flex justify-between items-center">
+              <Label className="text-md">Модели</Label>
+              <ProductModelsDialog fieldArray={fieldArray} form={form} />
+            </div>
+            <ProductModelsDataTable form={form} fieldArray={{ ...fieldArray, fields: fieldArray.fields.slice(0, fieldArray.fields.length - 1) }} />
+          </TabsContent>
+        </Tabs>
+      </form>
+    </Form>
+  );
+};
+
+export const MainTab = ({ control }: { control: Control<IProductFormSchema> }) => {
   const options = [
     { value: "One", label: "One" },
     { value: "Two", label: "Two" },
@@ -55,61 +84,45 @@ export const ProductCreateForm = () => {
     { value: "Nine", label: "Nine" },
     { value: "Ten", label: "Ten" },
   ];
-
-  useEffect(() => {
-    console.log(fields);
-  }, [fields]);
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-[10px]">
-        <div className="grid gap-2">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Имя" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="grid gap-2">
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>descr</FormLabel>
-                <FormControl>
-                  <Input id="password" placeholder="password" type="password" color="error" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="grid gap-2">
-          <FormField
-            control={form.control}
-            name="category"
-            render={({ field }) => <MultiSelectForm field={field} options={options} title="categories" />}
-          />
-        </div>
-
-        <div className="flex justify-between items-center mt-[50px]">
-          <Label className="text-md">Модели</Label>
-          <ProductModelsDialog fieldArray={fieldArray} form={form} />
-        </div>
-
-        <ProductModelsDataTable />
-
-        {/* <Button type="submit">Submit</Button> */}
-      </form>
-    </Form>
+    <div className="flex flex-col gap-[10px]">
+      <div className="grid gap-2">
+        <FormField
+          control={control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Название</FormLabel>
+              <FormControl>
+                <Input placeholder="Введите название" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      <div className="grid gap-2">
+        <FormField
+          control={control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Описание</FormLabel>
+              <FormControl>
+                <Input placeholder="Введите описание" color="error" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      <div className="grid gap-2">
+        <FormField
+          control={control}
+          name="category"
+          render={({ field }) => <MultiSelect field={field} options={options} title="Категории" placeholder="Выберите категории" />}
+        />
+      </div>
+    </div>
   );
 };

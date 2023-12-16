@@ -8,6 +8,8 @@ import { Input } from "@/app/ui/input";
 import { Button } from "@/app/ui/button";
 import { Separator } from "@/app/ui/separator";
 import { Label } from "@/app/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/ui/select";
+import { currencyList } from "@/helpers/currency-list";
 
 export interface IProductModelsDialogProps {
   form: UseFormReturn<any>;
@@ -22,7 +24,7 @@ export const ProductModelsDialog: FC<IProductModelsDialogProps> = ({ form, field
       <DialogTrigger>
         <Plus />
       </DialogTrigger>
-      <DialogContent className="m-[10px] w-[100%] sm:max-w-[80%] max-w-[300px] m-[20px] rounded-[15px]">
+      <DialogContent className="m-[10px] w-[100%] sm:max-w-[80%] max-w-[300px] rounded-[15px]">
         <DialogHeader>
           <DialogDescription className="flex flex-col gap-[10px]"></DialogDescription>
         </DialogHeader>
@@ -77,9 +79,20 @@ export const ProductModelsDialogContent: FC<IProductModelsDialogProps & { setOpe
           render={({ field }) => (
             <FormItem>
               <FormLabel>Валюта</FormLabel>
-              <FormControl>
-                <Input placeholder="Введите валюту модели" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a verified email to display" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {currencyList.map(({ label, value }, index) => (
+                    <SelectItem key={index} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -95,7 +108,7 @@ export const ProductModelsDialogContent: FC<IProductModelsDialogProps & { setOpe
             setOpen(false);
           }}
         >
-          Готово
+          Добавить
         </Button>
       </div>
     </div>
