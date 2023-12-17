@@ -1,7 +1,7 @@
 "use client";
 import ActiveLink from "@/app/ui/active-link";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/app/ui/sheet";
-import { routes } from "@/routes/dashboar-routes";
+import { routes } from "@/routes/dashboard-routes";
 import { PanelRightClose } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

@@ -1,22 +1,12 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const ProductModelInfoSchema = new Schema({
-  parameters: [
-    {
-      type: Map,
-      of: String,
-    },
-  ],
-  title: {
-    type: String,
-  },
-  price: {
-    type: String,
-  },
+const categorySchema = new Schema({
+  type: String,
+  required: true,
 });
 
-const ProductSchema = new Schema(
+const productSchema = new Schema(
   {
     title: {
       type: String,
@@ -26,28 +16,13 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    category: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
+    category: [categorySchema],
     price: {
       type: Number,
       required: true,
     },
-    models: [
-      {
-        title: {
-          type: String,
-        },
-        info: {
-          type: ProductModelInfoSchema,
-        },
-      },
-    ],
   },
   { timestamps: true }
 );
 
-export const Product = mongoose.models.Product || mongoose.model("Product", ProductSchema);
+export const Product = mongoose.models.product || mongoose.model("product", productSchema);

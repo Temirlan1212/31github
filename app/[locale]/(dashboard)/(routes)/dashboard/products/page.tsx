@@ -1,11 +1,14 @@
 import { Button } from "@/app/ui/button";
-import { RoutePath } from "@/routes/dashboar-routes";
+import { RoutePath } from "@/routes/dashboard-routes";
 import Link from "next/link";
+import { ObjectId } from "bson";
 
 export default async function Page() {
+  const id = new ObjectId();
+
   return (
-    <div className="p-10">
-      <Link href={`/${RoutePath["products-create"]}`}>
+    <div>
+      <Link href={`/${RoutePath["products-edit"]}/${id}`}>
         <Button>Create product</Button>
       </Link>
     </div>

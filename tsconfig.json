@@ -28,7 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "lib/schema.prisma",
-    "app/[locale]/(dashboard)/(routes)/dashboard/products/create/[model]"
+    "app/[locale]/(dashboard)/(routes)/dashboard/products/edit/[slug]/[model]odel]"
   ],
   "exclude": ["node_modules"]
 }

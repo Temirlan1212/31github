@@ -1,5 +1,5 @@
 import ActiveLink from "@/app/ui/active-link";
-import { routes } from "@/routes/dashboar-routes";
+import { routes } from "@/routes/dashboard-routes";
 
 export const DesktopSidebar = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectToDb from "@/lib/mongoose";
 import ProductModel from "@/lib/models/product-model.model";
+import { Product } from "@/lib/models/product.model";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -11,8 +12,8 @@ export async function POST(req: Request) {
 
   try {
     await connectToDb();
-    const ProductModelApi = new ProductModel(body);
-    const response = await ProductModelApi.save();
+    const ProductApi = new Product(body);
+    const response = await ProductApi.save();
 
     return new NextResponse(JSON.stringify(response), { status: 200 });
   } catch (error: any) {

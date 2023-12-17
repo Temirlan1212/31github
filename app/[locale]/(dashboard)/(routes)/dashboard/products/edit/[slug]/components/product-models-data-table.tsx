@@ -23,7 +23,7 @@ import { useEffect } from "react";
 import { TableSkeleton } from "@/app/skeletons/table-skeleton";
 import Link from "next/link";
 
-export function ProductModelsDataTable({ data, loading }: { data: Record<string, any>[]; loading: boolean }) {
+export function ProductModelsDataTable({ data, loading, slug }: { slug: string; data: Record<string, any>[]; loading: boolean }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -72,7 +72,7 @@ export function ProductModelsDataTable({ data, loading }: { data: Record<string,
         if (!id) return <></>;
         return (
           <div className="flex justify-end">
-            <Link passHref href={`create/${String(id)}`}>
+            <Link passHref href={`${slug}/models/${String(id)}`}>
               <Button variant="outline" className="p-[10px]">
                 <Edit2 className="w-[15px] text-muted-foreground h-[15px]" />
               </Button>
@@ -115,7 +115,7 @@ export function ProductModelsDataTable({ data, loading }: { data: Record<string,
         />
 
         <div className="flex items-center gap-2 w-full md:w-[fit-content]">
-          <Link passHref href={`create/model`}>
+          <Link passHref href={`${slug}/models/create`}>
             <Button variant="outline" className="p-[10px]">
               <Plus className="w-[15px] text-muted-foreground h-auto" />
             </Button>

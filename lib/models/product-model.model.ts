@@ -35,6 +35,10 @@ const productModelSchema = new Schema(
       type: String,
       required: true,
     },
+    productId: {
+      type: String,
+      required: true,
+    },
     parameteres: [productModelInfoSchema], // Define info as an array of productModelInfoSchema
   },
   { timestamps: true }

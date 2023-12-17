@@ -17,9 +17,10 @@ import { UseFieldArrayReturn, UseFormReturn, useFieldArray, useForm } from "reac
 
 export interface IModelProps {
   slug: string;
+  productSlug: string;
 }
 
-export default function Page({ params: { model } }: { params: { model: string } }) {
+export default function Page({ params: { model, slug } }: { params: { model: string; slug: string } }) {
   const router = useRouter();
 
   return (
@@ -29,12 +30,12 @@ export default function Page({ params: { model } }: { params: { model: string } 
         Назад
       </Button>
 
-      <ModelContent slug={model} />
+      <ModelContent productSlug={slug} slug={model} />
     </div>
   );
 }
 
-export const ModelContent: FC<IModelProps> = ({ slug }) => {
+export const ModelContent: FC<IModelProps> = ({ productSlug, slug }) => {
   const router = useRouter();
   const [data, setData] = useState({});
   const [skeleton, setSkeleton] = useState(false);
@@ -49,7 +50,7 @@ export const ModelContent: FC<IModelProps> = ({ slug }) => {
     values: data as any,
   });
 
-  const method = slug === "model" ? "create" : "update";
+  const method = slug === "create" ? "create" : "update";
 
   const childrenFieldArray = useFieldArray({
     control: form.control,
@@ -58,12 +59,13 @@ export const ModelContent: FC<IModelProps> = ({ slug }) => {
 
   async function onSubmit(data: IModelSchema) {
     setLoading(true);
+    const newData = { ...data, productId: productSlug };
     if (method === "update") {
-      const res = await fetch(`/api/product/model?id=${slug}`, { method: "PATCH", body: JSON.stringify(data) });
+      const res = await fetch(`/api/product/model?id=${slug}`, { method: "PATCH", body: JSON.stringify(newData) });
       if (res.ok && res.status === 200) router.back();
     }
     if (method === "create") {
-      const res = await fetch(`/api/product/model`, { method: "POST", body: JSON.stringify(data) });
+      const res = await fetch(`/api/product/model`, { method: "POST", body: JSON.stringify(newData) });
       if (res.ok && res.status === 200) router.back();
     }
     setLoading(false);
@@ -128,7 +130,12 @@ export const ModelContent: FC<IModelProps> = ({ slug }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Валюта</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={(value) => {
+                      if (!!value) field.onChange(value);
+                    }}
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger className="w-[150px]">
                         <SelectValue placeholder="Выберите валюту" />

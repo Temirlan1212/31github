@@ -13,8 +13,9 @@ import { ProductModelsDataTable } from "./product-models-data-table";
 import { Tabs } from "@radix-ui/react-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "@/app/ui/tabs";
 import { useRouter } from "next/navigation";
+import { Textarea } from "@/app/ui/textarea";
 
-export const ProductCreateForm = () => {
+export const ProductCreateForm = ({ slug }: { slug: string }) => {
   const router = useRouter();
   const [tab, setTab] = useState("");
   const [tableData, setTableData] = useState<Record<string, any>[]>([]);
@@ -36,7 +37,15 @@ export const ProductCreateForm = () => {
 
   async function onSubmit(data: IProductFormSchema) {
     setLoading(true);
-    console.log(data, "data");
+    const method = "create" ? "create" : "update";
+    if (method === "update") {
+      const res = await fetch(`/api/product?id=${slug}`, { method: "PATCH", body: JSON.stringify(data) });
+      if (res.ok && res.status === 200) router.back();
+    }
+    if (method === "create") {
+      const res = await fetch(`/api/product`, { method: "POST", body: JSON.stringify(data) });
+      if (res.ok && res.status === 200) router.back();
+    }
     setLoading(false);
   }
 
@@ -55,7 +64,7 @@ export const ProductCreateForm = () => {
   const fetchData = async () => {
     try {
       setTableLoading(true);
-      const res = await fetch("/api/product/model");
+      const res = await fetch(`/api/product/model?productId=${slug}`);
       const data = await res.json();
       setTableData(data);
     } catch (error) {
@@ -67,7 +76,7 @@ export const ProductCreateForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-[10px]">
-        <Tabs onValueChange={handleTab} value={!!tab ? tab : "main"} onChange={(e) => console.log(e)}>
+        <Tabs onValueChange={handleTab} value={!!tab ? tab : "main"}>
           <div className="flex gap-[10px] justify-between">
             <TabsList>
               <TabsTrigger value="main">Главная</TabsTrigger>
@@ -86,7 +95,7 @@ export const ProductCreateForm = () => {
               <Label className="text-md">Модели</Label>
             </div>
             <div className="py-4">
-              <ProductModelsDataTable data={tableData} loading={tableLoading} />
+              <ProductModelsDataTable slug={slug} data={tableData} loading={tableLoading} />
             </div>
           </TabsContent>
         </Tabs>
@@ -132,7 +141,7 @@ export const MainTab = ({ control }: { control: Control<IProductFormSchema> }) =
             <FormItem>
               <FormLabel>Описание</FormLabel>
               <FormControl>
-                <Input placeholder="Введите описание" color="error" {...field} />
+                <Textarea placeholder="Введите описание" color="error" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
