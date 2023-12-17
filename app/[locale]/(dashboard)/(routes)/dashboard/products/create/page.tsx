@@ -4,9 +4,5 @@ import { ProductCreateForm } from "@/app/[locale]/(dashboard)/(routes)/dashboard
 export default function Page() {
   const t = useTranslations();
 
-  return (
-    <div className="p-10">
-      <ProductCreateForm />
-    </div>
-  );
+  return <ProductCreateForm />;
 }

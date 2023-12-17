@@ -2,7 +2,13 @@ import * as z from "zod";
 
 export const priceSchema = z.object({
   currency: z.string(),
-  value: z.number(),
+  value: z.string(),
+});
+
+export const modelSchema = z.object({
+  price: priceSchema,
+  title: z.string().min(1),
+  parameteres: z.array(z.object({ name: z.string().min(1), value: z.string().min(1), description: z.string().min(0).max(50).optional() })),
 });
 
 export const productFormSchema = z.object({
@@ -10,17 +16,7 @@ export const productFormSchema = z.object({
   description: z.string().min(2).max(2000),
   category: z.array(z.string()),
   price: priceSchema,
-  models: z
-    .array(
-      z
-        .object({
-          price: priceSchema,
-          title: z.string(),
-          info: z.array(z.object({ name: z.string(), value: z.string(), description: z.string().min(0).max(50) })),
-        })
-        .optional()
-    )
-    .optional(),
 });
 
 export type IProductFormSchema = z.infer<typeof productFormSchema>;
+export type IModelSchema = z.infer<typeof modelSchema>;

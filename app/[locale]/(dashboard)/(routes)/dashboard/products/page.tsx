@@ -1,5 +1,5 @@
 import { Button } from "@/app/ui/button";
-import { RoutePath, RouteSlug } from "@/routes/dashboar-routes";
+import { RoutePath } from "@/routes/dashboar-routes";
 import Link from "next/link";
 
 export default async function Page() {

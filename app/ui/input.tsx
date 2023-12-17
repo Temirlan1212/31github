@@ -4,11 +4,12 @@ import { cn } from "@/lib/utils";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  wrapperclassname?: string;
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type, label, ...props }, ref) => {
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({ wrapperclassname, className, type, label, ...props }, ref) => {
   return (
-    <div className="flex flex-col gap-1">
+    <div className={cn("flex flex-col gap-1", wrapperclassname)}>
       {!!label && <label>{label}</label>}
       <input
         type={type}

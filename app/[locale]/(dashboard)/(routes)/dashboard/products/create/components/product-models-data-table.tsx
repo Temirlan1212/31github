@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   ColumnDef,
@@ -13,30 +11,25 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, Edit, Edit2, Edit2Icon, Edit3 } from "lucide-react";
+import { ChevronDown, Edit, Edit2, Edit3, Plus } from "lucide-react";
 import { Button } from "@/app/ui/button";
 import { Checkbox } from "@/app/ui/checkbox";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/app/ui/dropdown-menu";
 import { Input } from "@/app/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/ui/table";
-import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
-import { IProductFormSchema } from "@/app/validator-shema/product";
+import { IModelSchema } from "@/app/validator-shema/product";
 import { currencyList } from "@/helpers/currency-list";
-import { ProductModelsDialog } from "./product-models-dialog";
+import { useEffect } from "react";
+import { TableSkeleton } from "@/app/skeletons/table-skeleton";
+import Link from "next/link";
 
-export function ProductModelsDataTable({
-  fieldArray,
-  form,
-}: {
-  form: UseFormReturn<IProductFormSchema>;
-  fieldArray: UseFieldArrayReturn<IProductFormSchema, "models", "id">;
-}) {
+export function ProductModelsDataTable({ data, loading }: { data: Record<string, any>[]; loading: boolean }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const columns: ColumnDef<IProductFormSchema["models"]>[] = [
+  const columns: ColumnDef<IModelSchema[]>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -61,8 +54,8 @@ export function ProductModelsDataTable({
       accessorKey: "price",
       header: () => <div className="text-right">Цена</div>,
       cell: ({ row }) => {
-        const price = parseFloat(row.getValue("price")?.["value"] ?? 0);
-        const currency = currencyList.find(({ value }) => value === row.getValue("price")?.["currency"])?.label;
+        const price = parseFloat((row.getValue("price") as any)?.["value"] ?? 0);
+        const currency = currencyList.find(({ value }) => value === (row.getValue("price") as any)?.["currency"])?.label;
 
         return (
           <div className="text-right font-medium">
@@ -75,9 +68,15 @@ export function ProductModelsDataTable({
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
+        const id = (row.original as Record<string, any>)?.["_id"];
+        if (!id) return <></>;
         return (
-          <div>
-            <ProductModelsDialog fieldArray={fieldArray} form={form} />
+          <div className="flex justify-end">
+            <Link passHref href={`create/${String(id)}`}>
+              <Button variant="outline" className="p-[10px]">
+                <Edit2 className="w-[15px] text-muted-foreground h-[15px]" />
+              </Button>
+            </Link>
           </div>
         );
       },
@@ -85,8 +84,8 @@ export function ProductModelsDataTable({
   ];
 
   const table = useReactTable({
-    data: fieldArray.fields,
-    columns: columns,
+    data: data,
+    columns: columns as any,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -103,39 +102,49 @@ export function ProductModelsDataTable({
     },
   });
 
+  if (!!loading) return <TableSkeleton filterBar={true} rows={4} />;
+
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center pb-4 justify-between gap-2 flex-wrap">
         <Input
           placeholder="Поиск по названию модели"
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) => table.getColumn("title")?.setFilterValue(event.target.value)}
-          className="max-w-sm"
+          wrapperclassname="max-w-full w-full md:max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Колонки <ChevronDown className="ml-2 h-4 w-4" />
+
+        <div className="flex items-center gap-2 w-full md:w-[fit-content]">
+          <Link passHref href={`create/model`}>
+            <Button variant="outline" className="p-[10px]">
+              <Plus className="w-[15px] text-muted-foreground h-auto" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto w-full md:w-[fit-content]">
+                Колонки <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>

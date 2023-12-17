@@ -1,0 +1,74 @@
+import { NextResponse } from "next/server";
+import connectToDb from "@/lib/mongoose";
+import ProductModel from "@/lib/models/product-model.model";
+
+export async function POST(req: Request) {
+  const body = await req.json();
+
+  if (body == null) {
+    return new NextResponse(null, { status: 400 });
+  }
+
+  try {
+    await connectToDb();
+    const ProductModelApi = new ProductModel(body);
+    const response = await ProductModelApi.save();
+
+    return new NextResponse(JSON.stringify(response), { status: 200 });
+  } catch (error: any) {
+    return new NextResponse(
+      JSON.stringify({
+        message: error.message,
+      }),
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(req: Request) {
+  const body = await req.json();
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+
+  if (body == null || id == null) {
+    return new NextResponse(null, { status: 400 });
+  }
+
+  try {
+    await connectToDb();
+    const response = await ProductModel.findOneAndUpdate({ _id: id }, body);
+    return new NextResponse(JSON.stringify(response), { status: 200 });
+  } catch (error: any) {
+    return new NextResponse(
+      JSON.stringify({
+        message: error.message,
+      }),
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+  const type = !!id ? "one" : "list";
+
+  try {
+    await connectToDb();
+    if (type === "list") {
+      const data = await ProductModel.find();
+      return new NextResponse(JSON.stringify(data), { status: 200 });
+    }
+    if (type === "one") {
+      const data = await ProductModel.findById(id);
+      return new NextResponse(JSON.stringify(data), { status: 200 });
+    }
+  } catch (error: any) {
+    return new NextResponse(
+      JSON.stringify({
+        message: error.message,
+      }),
+      { status: 500 }
+    );
+  }
+}

@@ -31,7 +31,10 @@ export const routesList: Partial<Record<AppRoutes, IRouteProps>> = {
     path: RoutePath.dashboard,
     type: "link",
     role: "admin",
-    activeRoutes: Object.values(DashboardRoutePath).map((route) => `/${route}`),
+    activeRoutes: [
+      ...Object.values(DashboardRoutePath).map((route) => `/${route}`),
+      ...[DashboardRoutePath["products-create"]].map((route) => `/${route}/*`),
+    ],
   },
   [AppRoutes.ABOUT]: {
     title: "About",

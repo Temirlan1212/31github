@@ -1,7 +1,7 @@
 "use client";
 
 import { IProductFormSchema, productFormSchema } from "@/app/validator-shema/product";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Control, useFieldArray, useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/ui/form";
 import { Input } from "@/app/ui/input";
@@ -9,12 +9,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import MultiSelect from "@/app/ui/multi-select";
 import { Button } from "@/app/ui/button";
 import { Label } from "@/app/ui/label";
-import { ProductModelsDialog } from "./product-models-dialog";
 import { ProductModelsDataTable } from "./product-models-data-table";
 import { Tabs } from "@radix-ui/react-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "@/app/ui/tabs";
+import { useRouter } from "next/navigation";
 
 export const ProductCreateForm = () => {
+  const router = useRouter();
+  const [tab, setTab] = useState("");
+  const [tableData, setTableData] = useState<Record<string, any>[]>([]);
+  const [tableLoading, setTableLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<IProductFormSchema>({
@@ -25,15 +29,9 @@ export const ProductCreateForm = () => {
       category: [],
       price: {
         currency: "kg",
-        value: 0,
+        value: "",
       },
-      models: [{ title: "", info: [], price: { currency: "kg", value: 0 } }],
     },
-  });
-
-  const fieldArray = useFieldArray({
-    control: form.control,
-    name: "models",
   });
 
   async function onSubmit(data: IProductFormSchema) {
@@ -42,10 +40,34 @@ export const ProductCreateForm = () => {
     setLoading(false);
   }
 
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    setTab(hash);
+    fetchData();
+  }, []);
+
+  const handleTab = (value: string) => {
+    setTab(value);
+    if (value === "main") return router.push("#");
+    router.push(`#${value}`);
+  };
+
+  const fetchData = async () => {
+    try {
+      setTableLoading(true);
+      const res = await fetch("/api/product/model");
+      const data = await res.json();
+      setTableData(data);
+    } catch (error) {
+    } finally {
+      setTableLoading(false);
+    }
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-[10px]">
-        <Tabs defaultValue="main">
+        <Tabs onValueChange={handleTab} value={!!tab ? tab : "main"} onChange={(e) => console.log(e)}>
           <div className="flex gap-[10px] justify-between">
             <TabsList>
               <TabsTrigger value="main">Главная</TabsTrigger>
@@ -62,9 +84,10 @@ export const ProductCreateForm = () => {
           <TabsContent value="models" className="py-[20px]">
             <div className="flex justify-between items-center">
               <Label className="text-md">Модели</Label>
-              <ProductModelsDialog fieldArray={fieldArray} form={form} />
             </div>
-            <ProductModelsDataTable form={form} fieldArray={{ ...fieldArray, fields: fieldArray.fields.slice(0, fieldArray.fields.length - 1) }} />
+            <div className="py-4">
+              <ProductModelsDataTable data={tableData} loading={tableLoading} />
+            </div>
           </TabsContent>
         </Tabs>
       </form>

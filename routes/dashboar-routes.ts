@@ -24,7 +24,7 @@ export const routesList: Partial<Record<AppRoutes, IRouteProps>> = {
     path: RoutePath.products,
     type: "link",
     role: "admin",
-    activeRoutes: [RoutePath.products, RoutePath["products-create"]].map((route) => `/${route}`),
+    activeRoutes: [RoutePath.products, RoutePath["products-create"]].map((route) => `/${route}/*`),
   },
 };
 

@@ -14,7 +14,17 @@ const ActiveLink = ({ children, ...rest }: PropsWithChildren<IActiveLinkProps>) 
   const { href } = rest;
   const pathname = usePathname();
   const isActiveRoutes = rest.activeRoutes && Array.isArray(rest.activeRoutes);
-  const isActive = isActiveRoutes ? rest.activeRoutes.some((route) => route === pathname) : pathname === href;
+  const isActive = isActiveRoutes
+    ? rest.activeRoutes?.some((route) => {
+        if (route.includes("/*")) {
+          const escapedStr1 = route.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const regexPattern = new RegExp(`^${escapedStr1.replace("\\*", "(.*)")}$`);
+          const beforeWildcard = pathname.split("/*")[0];
+          return regexPattern.test(beforeWildcard);
+        }
+        return route === pathname;
+      })
+    : pathname === href;
 
   return (
     <Link
