@@ -1,16 +1,19 @@
-import { Button } from "@/app/ui/button";
-import { RoutePath } from "@/routes/dashboard-routes";
-import Link from "next/link";
 import { ObjectId } from "bson";
+import { ProductDataTable } from "./components/product-data-table";
+
+const fetchData = async () => {
+  const result = await fetch(process.env.URL + "/api/product", { cache: "no-store" });
+  if (result.ok) return result.json();
+  return [];
+};
 
 export default async function Page() {
   const id = new ObjectId();
+  const data = await fetchData();
 
   return (
     <div>
-      <Link href={`/${RoutePath["products-edit"]}/${id}`}>
-        <Button>Create product</Button>
-      </Link>
+      <ProductDataTable slug={String(id)} data={data} loading={false} />
     </div>
   );
 }

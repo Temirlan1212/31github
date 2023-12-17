@@ -1,11 +1,9 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const categorySchema = new Schema({
-  type: String,
-  required: true,
-});
+// Define the category schema
 
+// Define the product schema
 const productSchema = new Schema(
   {
     title: {
@@ -16,13 +14,11 @@ const productSchema = new Schema(
       type: String,
       required: true,
     },
-    category: [categorySchema],
-    price: {
-      type: Number,
-      required: true,
-    },
+    category: Array<String>,
   },
   { timestamps: true }
 );
 
-export const Product = mongoose.models.product || mongoose.model("product", productSchema);
+// Create the Product model
+const Product = mongoose.models.product || mongoose.model("product", productSchema);
+export default Product;

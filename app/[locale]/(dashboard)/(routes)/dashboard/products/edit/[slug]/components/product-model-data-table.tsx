@@ -23,7 +23,7 @@ import { useEffect } from "react";
 import { TableSkeleton } from "@/app/skeletons/table-skeleton";
 import Link from "next/link";
 
-export function ProductModelsDataTable({ data, loading, slug }: { slug: string; data: Record<string, any>[]; loading: boolean }) {
+export function ProductModelDataTable({ data, loading, slug }: { slug: string; data: Record<string, any>[]; loading: boolean }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});

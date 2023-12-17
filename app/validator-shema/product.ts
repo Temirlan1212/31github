@@ -15,7 +15,7 @@ export const productFormSchema = z.object({
   title: z.string().min(1, "Это поле должно содержать не менее 1 символов").max(50),
   description: z.string().min(1, "Это поле должно содержать не менее 1 символов").max(2000),
   category: z.array(z.string()).min(1, "Массив должен содержать по крайней мере 1 элемент(ы)"),
-  price: priceSchema,
+  price: priceSchema.optional(),
 });
 
 export type IProductFormSchema = z.infer<typeof productFormSchema>;
