@@ -22,6 +22,9 @@ export interface IMultiSelectProps {
   placeholder?: string;
   valueFieldName?: string;
   labelFieldName?: string;
+  slots?: {
+    actions?: (option: Record<string, any>) => React.ReactNode;
+  };
 }
 
 const MultiSelect: React.ForwardRefRenderFunction<
@@ -35,6 +38,7 @@ const MultiSelect: React.ForwardRefRenderFunction<
     field,
     labelFieldName = "label",
     valueFieldName = "value",
+    slots,
   },
   ref
 ) => {
@@ -135,17 +139,22 @@ const MultiSelect: React.ForwardRefRenderFunction<
                       if (!!field) field.onChange(Array.from(selectedValues));
                     }}
                   >
-                    <div
-                      className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                        isSelected
-                          ? "bg-primary text-primary-foreground"
-                          : "opacity-50 [&_svg]:invisible"
-                      )}
-                    >
-                      <CheckIcon className={cn("h-4 w-4")} />
+                    <div className="flex items-center gap-2 justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={cn(
+                            "flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                            isSelected
+                              ? "bg-primary text-primary-foreground"
+                              : "opacity-50 [&_svg]:invisible"
+                          )}
+                        >
+                          <CheckIcon className={cn("h-4 w-4")} />
+                        </div>
+                        <span>{option?.[labelFieldName] ?? "---"}</span>
+                      </div>
+                      <div>{slots?.actions && slots?.actions(option)}</div>
                     </div>
-                    <span>{option?.[labelFieldName] ?? "---"}</span>
                   </CommandItem>
                 );
               })}

@@ -57,19 +57,6 @@ export const ProductMainInfo = ({
 
       <div className="grid gap-2">
         <CategoryFormField control={control} />
-
-        {/* <FormField
-          control={control}
-          name="category"
-          render={({ field }) => (
-            <MultiSelect
-              field={field}
-              options={options}
-              title="Категории"
-              placeholder="Выберите категории"
-            />
-          )}
-        /> */}
       </div>
     </div>
   );

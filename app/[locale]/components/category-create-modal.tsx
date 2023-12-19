@@ -1,5 +1,6 @@
 "use client";
 
+import { FormSkeleton } from "@/app/skeletons/form-skeleton";
 import { IOption } from "@/app/stores/dictionary";
 import { Button } from "@/app/ui/button";
 import {
@@ -21,19 +22,25 @@ import { IOptionFormSchema, optionSchema } from "@/app/validator-shema/option";
 import { isEmptyObject } from "@/helpers/common";
 import { getServerMessage } from "@/helpers/server-messages";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DialogTrigger } from "@radix-ui/react-dialog";
-import { Label } from "@radix-ui/react-dropdown-menu";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function CategoryCreateModal({
   onSuccess,
+  slots,
+  id,
 }: {
   onSuccess?: (data: IOption[]) => void;
+  slots?: {
+    trigger?: (callback: Dispatch<SetStateAction<boolean>>) => React.ReactNode;
+  };
+  id?: string;
 }) {
   const [loading, setLoading] = useState(false);
+  const [skeleton, setSkeleton] = useState(false);
   const [open, setOpen] = useState(false);
+  const [data, setData] = useState<IOption>({ value: "", label: "" });
 
   const form = useForm<IOptionFormSchema>({
     resolver: zodResolver(optionSchema),
@@ -41,13 +48,18 @@ export default function CategoryCreateModal({
       value: "",
       label: "",
     },
+    values: data,
   });
 
   async function onSubmit(formData: IOptionFormSchema) {
     try {
       setLoading(true);
-      const res: any = await fetch(`/api/category`, {
-        method: "POST",
+      const method = !!id ? "PATCH" : "POST";
+      const url =
+        method === "PATCH" ? `/api/category?id=${id}` : "/api/category";
+
+      const res: any = await fetch(url, {
+        method: method,
         body: JSON.stringify(formData),
       });
 
@@ -74,14 +86,25 @@ export default function CategoryCreateModal({
     }
   }
 
+  const fetchCategory = async (id: string) => {
+    try {
+      setSkeleton(true);
+      const res = await fetch(`/api/category?id=${id}`);
+      const data = await res.json();
+      setData(data);
+    } catch (error) {
+    } finally {
+      setSkeleton(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id != null && open) fetchCategory(id);
+  }, [id, open]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <div className="flex justify-between items-end">
-        <Label>Категории</Label>
-        <DialogTrigger>
-          <Plus />
-        </DialogTrigger>
-      </div>
+      {slots?.trigger ? slots.trigger(setOpen) : <Plus />}
 
       <DialogContent>
         <Form {...form}>
@@ -92,48 +115,54 @@ export default function CategoryCreateModal({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="flex flex-col gap-2">
-              <div className="grid gap-2">
-                <FormField
-                  control={form.control}
-                  name="label"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Название</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Название модели" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            {skeleton ? (
+              <FormSkeleton rows={2} />
+            ) : (
+              <>
+                <div className="flex flex-col gap-2">
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="label"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Название</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Название модели" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-              <div className="grid gap-2">
-                <FormField
-                  control={form.control}
-                  name="value"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Значение</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Значение модели" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-            <div className="w-full flex justify-end">
-              <Button
-                type="button"
-                loading={loading}
-                onClick={() => onSubmit(form.getValues())}
-              >
-                Создать
-              </Button>
-            </div>
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="value"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Значение</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Значение модели" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="w-full flex justify-end">
+                  <Button
+                    type="button"
+                    loading={loading}
+                    onClick={() => onSubmit(form.getValues())}
+                  >
+                    Создать
+                  </Button>
+                </div>
+              </>
+            )}
           </form>
         </Form>
       </DialogContent>
