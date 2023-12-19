@@ -1,20 +1,21 @@
 "use client";
 
-import { IProductFormSchema, productFormSchema } from "@/app/validator-shema/product";
-import { Suspense, useEffect, useState } from "react";
-import { Control, useFieldArray, useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/ui/form";
-import { Input } from "@/app/ui/input";
+import {
+  IProductFormSchema,
+  productFormSchema,
+} from "@/app/validator-shema/product";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Form } from "@/app/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import MultiSelect from "@/app/ui/multi-select";
 import { Button } from "@/app/ui/button";
 import { Label } from "@/app/ui/label";
 import { Tabs } from "@radix-ui/react-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "@/app/ui/tabs";
 import { useRouter } from "next/navigation";
-import { Textarea } from "@/app/ui/textarea";
 import { ProductModelDataTable } from "./product-model-data-table";
 import { FormSkeleton } from "@/app/skeletons/form-skeleton";
+import { ProductMainInfo } from "./product-main-info";
 
 export const ProductCreateForm = ({ slug }: { slug: string }) => {
   const router = useRouter();
@@ -43,10 +44,16 @@ export const ProductCreateForm = ({ slug }: { slug: string }) => {
     let res: Record<string, any> = {};
     const method = data == null ? "create" : "update";
     if (method === "update") {
-      res = await fetch(`/api/product?id=${slug}`, { method: "PATCH", body: JSON.stringify(formData) });
+      res = await fetch(`/api/product?id=${slug}`, {
+        method: "PATCH",
+        body: JSON.stringify(formData),
+      });
     }
     if (method === "create") {
-      res = await fetch(`/api/product`, { method: "POST", body: JSON.stringify({ ...formData, _id: slug }) });
+      res = await fetch(`/api/product`, {
+        method: "POST",
+        body: JSON.stringify({ ...formData, _id: slug }),
+      });
     }
 
     if (res?.ok && res?.status === 200) {
@@ -95,7 +102,10 @@ export const ProductCreateForm = ({ slug }: { slug: string }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-[10px]">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-[10px]"
+      >
         <Tabs onValueChange={handleTab} value={!!tab ? tab : "main"}>
           <div className="flex gap-[10px] justify-between">
             <TabsList>
@@ -108,73 +118,26 @@ export const ProductCreateForm = ({ slug }: { slug: string }) => {
           </div>
 
           <TabsContent value="main" className="py-[20px]">
-            {skeleton ? <FormSkeleton /> : <MainTab control={form.control} />}
+            {skeleton ? (
+              <FormSkeleton />
+            ) : (
+              <ProductMainInfo control={form.control} />
+            )}
           </TabsContent>
           <TabsContent value="models" className="py-[20px]">
             <div className="flex justify-between items-center">
               <Label className="text-md">Модели</Label>
             </div>
             <div className="py-4">
-              <ProductModelDataTable slug={slug} data={tableData} loading={tableSkeletonLoading} />
+              <ProductModelDataTable
+                slug={slug}
+                data={tableData}
+                loading={tableSkeletonLoading}
+              />
             </div>
           </TabsContent>
         </Tabs>
       </form>
     </Form>
-  );
-};
-
-export const MainTab = ({ control }: { control: Control<IProductFormSchema> }) => {
-  const options = [
-    { value: "One", label: "One" },
-    { value: "Two", label: "Two" },
-    { value: "Tree", label: "Tree" },
-    { value: "Four", label: "Four" },
-    { value: "Six", label: "Six" },
-    { value: "Seven", label: "Seven" },
-    { value: "Eight", label: "Eight" },
-    { value: "Nine", label: "Nine" },
-    { value: "Ten", label: "Ten" },
-  ];
-  return (
-    <div className="flex flex-col gap-[10px]">
-      <div className="grid gap-2">
-        <FormField
-          control={control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Название</FormLabel>
-              <FormControl>
-                <Input placeholder="Введите название" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      <div className="grid gap-2">
-        <FormField
-          control={control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Описание</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Введите описание" color="error" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      <div className="grid gap-2">
-        <FormField
-          control={control}
-          name="category"
-          render={({ field }) => <MultiSelect field={field} options={options} title="Категории" placeholder="Выберите категории" />}
-        />
-      </div>
-    </div>
   );
 };

@@ -3,6 +3,7 @@ export const USER_MESSAGES = {
   emailExists: "email-exists",
   userNotFound: "user-not-found",
   wrongPassword: "wrong-password",
+  categoryExists: "category-exists",
 };
 
 export const SERVER_MESSAGES = {

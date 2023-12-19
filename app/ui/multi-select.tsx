@@ -4,25 +4,43 @@ import React, { forwardRef, useEffect } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/app/ui/badge";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/app/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/app/ui/command";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/app/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/ui/popover";
 import { Label } from "@/app/ui/label";
 
 export interface IMultiSelectProps {
   options: Record<string, any>[];
-  title: string;
+  title?: string;
   field: ControllerRenderProps<any, any>;
   placeholder?: string;
   valueFieldName?: string;
   labelFieldName?: string;
 }
 
-const MultiSelect: React.ForwardRefRenderFunction<HTMLDivElement, IMultiSelectProps> = (
-  { options = [], title, placeholder, field, labelFieldName = "label", valueFieldName = "value" },
+const MultiSelect: React.ForwardRefRenderFunction<
+  HTMLDivElement,
+  IMultiSelectProps
+> = (
+  {
+    options = [],
+    title,
+    placeholder,
+    field,
+    labelFieldName = "label",
+    valueFieldName = "value",
+  },
   ref
 ) => {
-  const [selectedValues, setSelectedValues] = React.useState(() => new Set<string>());
+  const [selectedValues, setSelectedValues] = React.useState(
+    () => new Set<string>()
+  );
 
   useEffect(() => {
     if (!!field) setSelectedValues(new Set(field.value));
@@ -34,15 +52,23 @@ const MultiSelect: React.ForwardRefRenderFunction<HTMLDivElement, IMultiSelectPr
       <Popover>
         <PopoverTrigger asChild>
           <FormControl>
-            <div className="relative flex min-h-[36px] items-center justify-end rounded-md border data-[state=open]:border-ring">
-              <div className="relative mr-auto flex flex-grow flex-wrap items-center overflow-hidden px-3 py-1">
+            <div className="relative flex min-h-[46px] items-center justify-end rounded-md border data-[state=open]:border-ring">
+              <div className="relative mr-auto flex flex-grow flex-wrap items-center overflow-hidden px-3 py-2">
                 {selectedValues?.size > 0 ? (
                   options &&
                   options
-                    .filter((option) => selectedValues.has(option?.[valueFieldName] ?? "---"))
+                    .filter((option) =>
+                      selectedValues.has(option?.[valueFieldName] ?? "---")
+                    )
                     .map((option) => (
-                      <Badge key={option?.[valueFieldName] ?? "---"} variant="outline" className="m-[2px] gap-1 pr-0.5">
-                        <span className="">{option?.[labelFieldName] ?? "---"}</span>
+                      <Badge
+                        key={option?.[valueFieldName] ?? "---"}
+                        variant="outline"
+                        className="m-[2px] gap-1 pr-0.5"
+                      >
+                        <span className="">
+                          {option?.[labelFieldName] ?? "---"}
+                        </span>
                         <span
                           onClick={(e) => {
                             e.preventDefault();
@@ -82,19 +108,26 @@ const MultiSelect: React.ForwardRefRenderFunction<HTMLDivElement, IMultiSelectPr
             </div>
           </FormControl>
         </PopoverTrigger>
-        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+        <PopoverContent
+          className="w-[var(--radix-popover-trigger-width)] p-0"
+          align="start"
+        >
           <Command>
             <CommandInput placeholder="Поиск..." className="h-9" />
             <CommandEmpty>Ничего не найдено.</CommandEmpty>
             <CommandGroup>
               {options.map((option, index) => {
-                const isSelected = selectedValues.has(option?.[valueFieldName] ?? "---");
+                const isSelected = selectedValues.has(
+                  option?.[valueFieldName] ?? "---"
+                );
                 return (
                   <CommandItem
                     key={index}
                     onSelect={() => {
                       if (isSelected) {
-                        selectedValues.delete(option?.[valueFieldName] ?? "---");
+                        selectedValues.delete(
+                          option?.[valueFieldName] ?? "---"
+                        );
                       } else {
                         selectedValues.add(option?.[valueFieldName] ?? "---");
                       }
@@ -105,7 +138,9 @@ const MultiSelect: React.ForwardRefRenderFunction<HTMLDivElement, IMultiSelectPr
                     <div
                       className={cn(
                         "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                        isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible"
+                        isSelected
+                          ? "bg-primary text-primary-foreground"
+                          : "opacity-50 [&_svg]:invisible"
                       )}
                     >
                       <CheckIcon className={cn("h-4 w-4")} />
