@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  IProductFormSchema,
-  productFormSchema,
-} from "@/app/validator-shema/product";
+import { IProductFormSchema, productFormSchema } from "@/app/validator-shema/product";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/app/ui/form";
@@ -39,6 +36,7 @@ export const ProductCreateForm = ({ slug }: { slug: string }) => {
     },
     values: (data as any) ?? {},
   });
+
   async function onSubmit(formData: IProductFormSchema) {
     setLoading(true);
     let res: Record<string, any> = {};
@@ -102,10 +100,7 @@ export const ProductCreateForm = ({ slug }: { slug: string }) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-[10px]"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-[10px]">
         <Tabs onValueChange={handleTab} value={!!tab ? tab : "main"}>
           <div className="flex gap-[10px] justify-between">
             <TabsList>
@@ -118,22 +113,14 @@ export const ProductCreateForm = ({ slug }: { slug: string }) => {
           </div>
 
           <TabsContent value="main" className="py-[20px]">
-            {skeleton ? (
-              <FormSkeleton />
-            ) : (
-              <ProductMainInfo control={form.control} />
-            )}
+            {skeleton ? <FormSkeleton /> : <ProductMainInfo control={form.control} />}
           </TabsContent>
           <TabsContent value="models" className="py-[20px]">
             <div className="flex justify-between items-center">
               <Label className="text-md">Модели</Label>
             </div>
             <div className="py-4">
-              <ProductModelDataTable
-                slug={slug}
-                data={tableData}
-                loading={tableSkeletonLoading}
-              />
+              <ProductModelDataTable slug={slug} data={tableData} loading={tableSkeletonLoading} />
             </div>
           </TabsContent>
         </Tabs>
