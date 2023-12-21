@@ -10,6 +10,7 @@
     "home": "Home",
     "sign-out": "Log out",
     "sign-in": "Sign in",
-    "profile": "Profile"
+    "profile": "Profile",
+    "dashboard": "Dashboard"
   }
 }
