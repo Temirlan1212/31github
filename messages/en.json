@@ -4,7 +4,8 @@
     "Could not fetch user.": "Could not fetch user.",
     "Not authenticated.": "Not authenticated.",
     "User not found.": "User not found.",
-    "error": "Error"
+    "error": "Error",
+    "Not found": "Not found"
   },
   "Navbar": {
     "home": "Home",
