@@ -5,8 +5,7 @@
     "Not authenticated.": "Not authenticated.",
     "User not found.": "User not found.",
     "error": "Error",
-    "Not found": "Not found",
-    "No such user": "No such user"
+    "Not found": "Not found"
   },
   "Navbar": {
     "home": "Home",
