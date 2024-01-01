@@ -49,7 +49,7 @@ export const MobileSidebar = ({ children }: { children: React.ReactNode }) => {
 const CustomHeader = () => {
   return (
     <div className="flex">
-      <span className="text-2xl font-extrabold">Main</span>
+      <span className="text-2xl font-extrabold">Главная</span>
     </div>
   );
 };
