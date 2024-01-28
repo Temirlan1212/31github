@@ -1,35 +1,109 @@
-"use client";
-
-import { useTheme } from "next-themes";
-import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
-import { BlockNoteView, useBlockNote } from "@blocknote/react";
+import {
+  defaultBlockSchema,
+  defaultBlockSpecs,
+  defaultProps,
+} from "@blocknote/core";
+import {
+  BlockNoteView,
+  useBlockNote,
+  createReactBlockSpec,
+  ReactSlashMenuItem,
+  getDefaultReactSlashMenuItems,
+} from "@blocknote/react";
 import "@blocknote/react/style.css";
+import { RiText } from "react-icons/ri";
 
-interface EditorProps {
-  onChange: (value: string) => void;
-  initialContent?: string;
-  editable?: boolean;
-}
-
-const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
-  const { resolvedTheme } = useTheme();
-
-  const editor: BlockNoteEditor = useBlockNote({
-    editable,
-
-    onEditorContentChange: (editor) => {
-      onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
+export default function Editor() {
+  // Creates a paragraph block with custom font.
+  const FontParagraphBlock = createReactBlockSpec(
+    {
+      type: "fontParagraph",
+      propSchema: {
+        ...defaultProps,
+        font: {
+          default: "Comic Sans MS",
+        },
+      },
+      content: "inline",
     },
+    {
+      render: ({ block, contentRef }) => {
+        const style = {
+          fontFamily: block.props.font,
+        };
+
+        console.log(block);
+
+        return (
+          <p ref={contentRef} style={style}>
+            {block.props.font}
+          </p>
+        );
+      },
+      toExternalHTML: ({ contentRef }) => <p ref={contentRef} />,
+      parse: (element) => {
+        const font = element.style.fontFamily;
+
+        if (font === "") {
+          return;
+        }
+
+        return {
+          font: font || undefined,
+        };
+      },
+    }
+  );
+
+  // Our block schema, which contains the configs for blocks that we want our
+  // editor to use.
+  const blockSchema = {
+    // Adds all default blocks.
+    ...defaultBlockSchema,
+    // Adds the font paragraph.
+    fontParagraph: FontParagraphBlock.config,
+  };
+  // Our block specs, which contain the configs and implementations for blocks
+  // that we want our editor to use.
+  const blockSpecs = {
+    // Adds all default blocks.
+    ...defaultBlockSpecs,
+    // Adds the font paragraph.
+    fontParagraph: FontParagraphBlock,
+  };
+
+  // Creates a slash menu item for inserting a font paragraph block.
+  const insertFontParagraph: ReactSlashMenuItem<typeof blockSchema> = {
+    name: "Insert Font Paragraph",
+    execute: (editor) => {
+      editor.insertBlocks(
+        [
+          {
+            type: "fontParagraph",
+            props: {
+              font: "" || undefined,
+            },
+          },
+        ],
+        editor.getTextCursorPosition().block,
+        "after"
+      );
+    },
+    aliases: ["p", "paragraph", "font"],
+    group: "Other",
+    icon: <RiText />,
+  };
+
+  // Creates a new editor instance.
+  const editor = useBlockNote({
+    // Tells BlockNote which blocks to use.
+    blockSpecs: blockSpecs,
+    slashMenuItems: [
+      ...getDefaultReactSlashMenuItems(blockSchema),
+      insertFontParagraph,
+    ],
   });
 
-  return (
-    <div>
-      <BlockNoteView
-        editor={editor}
-        theme={resolvedTheme === "dark" ? "dark" : "light"}
-      />
-    </div>
-  );
-};
-
-export default Editor;
+  // Renders the editor instance using a React component.
+  return <BlockNoteView editor={editor} theme={"light"} />;
+}

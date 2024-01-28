@@ -12,9 +12,14 @@ export const DesktopSidebar = ({ children }: { children: React.ReactNode }) => {
               {routes.map(({ path, title, activeRoutes }, index) => (
                 <ActiveLink
                   key={index}
-                  className={{ active: "bg-accent", default: "!w-full flex text-md hover:bg-accent px-[8px] py-[5px] rounded-[10px]" }}
+                  className={{
+                    active: "bg-accent",
+                    default:
+                      "!w-full flex text-md hover:bg-accent px-[8px] py-[5px] rounded-[10px]",
+                  }}
                   href={`/${path}`}
                   activeRoutes={activeRoutes}
+                  to={`/${path}`}
                 >
                   {title}
                 </ActiveLink>

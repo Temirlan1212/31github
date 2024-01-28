@@ -23,7 +23,7 @@ export default function Home() {
         <CategoryNav />
       </div> */}
 
-      <Editor onChange={onChange} />
+      <Editor />
 
       <HeroSection />
     </div>
