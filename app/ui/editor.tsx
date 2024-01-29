@@ -1,3 +1,5 @@
+"use client";
+
 import {
   defaultBlockSchema,
   defaultBlockSpecs,
@@ -9,15 +11,19 @@ import {
   createReactBlockSpec,
   ReactSlashMenuItem,
   getDefaultReactSlashMenuItems,
+  lightDefaultTheme,
 } from "@blocknote/react";
 import "@blocknote/react/style.css";
 import { RiText } from "react-icons/ri";
+import { HeroSection } from "../[locale]/(home)/components/hero-section";
+import { useEffect, useState } from "react";
+import { Button } from "./button";
 
 export default function Editor() {
   // Creates a paragraph block with custom font.
   const FontParagraphBlock = createReactBlockSpec(
     {
-      type: "fontParagraph",
+      type: "newHtmlBlock",
       propSchema: {
         ...defaultProps,
         font: {
@@ -28,17 +34,42 @@ export default function Editor() {
     },
     {
       render: ({ block, contentRef }) => {
+        const [title, setTitle] = useState("This is Title");
         const style = {
           fontFamily: block.props.font,
         };
 
-        console.log(block);
+        const content = (
+          <div ref={contentRef} style={style}>
+            <div>
+              <div>{title}</div>
 
-        return (
-          <p ref={contentRef} style={style}>
-            {block.props.font}
-          </p>
+              <Button
+                onClick={() => setTitle(`${Math.round(Math.random() * 10)}`)}
+              >
+                update title
+              </Button>
+              {/* <HeroSection /> */}
+
+              <iframe
+                width="100%"
+                style={{ borderRadius: "10px" }}
+                height="315"
+                src="https://www.youtube.com/embed/rXDCAAkiC-s?si=N32AsmYwRftPyq4L"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              ></iframe>
+            </div>
+          </div>
         );
+
+        // const id = block.id;
+        const blockContentLength = block.content.length;
+        if (blockContentLength < 1)
+          block.content.push({ type: "video", url: "..." } as any);
+        // console.log(block, "block");
+
+        return content;
       },
       toExternalHTML: ({ contentRef }) => <p ref={contentRef} />,
       parse: (element) => {
@@ -61,7 +92,7 @@ export default function Editor() {
     // Adds all default blocks.
     ...defaultBlockSchema,
     // Adds the font paragraph.
-    fontParagraph: FontParagraphBlock.config,
+    newHtmlBlock: FontParagraphBlock.config,
   };
   // Our block specs, which contain the configs and implementations for blocks
   // that we want our editor to use.
@@ -69,17 +100,17 @@ export default function Editor() {
     // Adds all default blocks.
     ...defaultBlockSpecs,
     // Adds the font paragraph.
-    fontParagraph: FontParagraphBlock,
+    newHtmlBlock: FontParagraphBlock,
   };
 
   // Creates a slash menu item for inserting a font paragraph block.
   const insertFontParagraph: ReactSlashMenuItem<typeof blockSchema> = {
-    name: "Insert Font Paragraph",
+    name: "Youtube",
     execute: (editor) => {
       editor.insertBlocks(
         [
           {
-            type: "fontParagraph",
+            type: "newHtmlBlock",
             props: {
               font: "" || undefined,
             },
@@ -90,7 +121,7 @@ export default function Editor() {
       );
     },
     aliases: ["p", "paragraph", "font"],
-    group: "Other",
+    group: "Components",
     icon: <RiText />,
   };
 
@@ -98,12 +129,49 @@ export default function Editor() {
   const editor = useBlockNote({
     // Tells BlockNote which blocks to use.
     blockSpecs: blockSpecs,
+
     slashMenuItems: [
       ...getDefaultReactSlashMenuItems(blockSchema),
       insertFontParagraph,
     ],
+    onEditorContentChange: async (edit) => {
+      console.log(edit.topLevelBlocks);
+      // const html = await edit.blocksToHTMLLossy(edit.topLevelBlocks);
+      // console.log(html);
+    },
   });
 
   // Renders the editor instance using a React component.
-  return <BlockNoteView editor={editor} theme={"light"} />;
+  return <BlockNoteView editor={editor} theme={lightDefaultTheme} />;
 }
+
+// const BlockNoteNewBlock = () => {
+//   const [title, setTitle] = useState("This is Title");
+
+//   return (
+//     <div>
+//       <div>{title}</div>
+//       <div className="flex gap-[20px] justify-between">
+//         <Image
+//           width={400}
+//           height={400}
+//           src={
+//             "https://images.unsplash.com/photo-1682687982502-1529b3b33f85?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+//           }
+//           alt={"new"}
+//         />
+//         <Image
+//           width={400}
+//           height={400}
+//           src={
+//             "https://images.unsplash.com/photo-1682687982502-1529b3b33f85?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+//           }
+//           alt={"new"}
+//         />
+//       </div>
+
+//       <Button onClick={() => setTitle("new Title")}>update title</Button>
+//       <HeroSection />
+//     </div>
+//   );
+// };
